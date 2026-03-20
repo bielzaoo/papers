@@ -76,7 +76,7 @@ Content-Length: 189
 
 Diferentemente do cenário anterior, não vemos reflexão do domínio.
 Se você já deu uma pesquisada sobre **CORS Misconfiguration** , talvez
-já tenha se deparado com cenário chamado **Null trusted origin**.
+já tenha se deparado com cenário chamado **Null Origin Trusted**.
 
 Nestes casos, inserir a palavra `null` ali no lugar de **<http://algumsite.com>** deve refletir o `null` na resposta da request.
 
