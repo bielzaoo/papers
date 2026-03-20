@@ -12,7 +12,7 @@ tags:
 ---
 ## Sumário
 <!--toc:start-->
-- [CORS Series: Origem desconhecida? Liberado](#cors-series-origem-desconhecida-liberado)
+- [CORS Series: Origem desconhecida? Liberado!](#cors-series-origem-desconhecida-liberado)
   - [CORS: Achando ele](#cors-achando-ele)
   - [CORS: E o que tem de perigoso em tudo isso?](#cors-e-o-que-tem-de-perigoso-em-tudo-isso)
 - [No fim](#no-fim)
