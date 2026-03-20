@@ -1,6 +1,5 @@
 ---
 title: "CORS Series: Part 1"
-date: 2026-03-19 00:00:00 +0000
 categories:
   - writeups
   - web hacking
