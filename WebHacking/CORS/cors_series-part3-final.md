@@ -1,5 +1,5 @@
 ---
-title: "CORS Series: Part 2"
+title: "CORS Series: Part 3 - Final"
 categories:
   - writeups
   - web hacking
