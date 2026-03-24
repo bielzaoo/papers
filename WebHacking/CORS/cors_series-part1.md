@@ -1,11 +1,11 @@
 ---
 title: "CORS Series: Part 1"
 categories:
-  - writeups
+  - papers
   - web hacking
   - owasp
 tags:
-  - writeups
+  - papers
   - ctf
   - owasp
   - cors
