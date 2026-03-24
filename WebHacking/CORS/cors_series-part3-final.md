@@ -1,7 +1,7 @@
 ---
 title: "CORS Series: Part 3 - Final"
 categories:
-  - writeups
+  - papers
   - web hacking
   - owasp
 tags:
