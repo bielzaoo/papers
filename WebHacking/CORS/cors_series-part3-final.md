@@ -5,7 +5,7 @@ categories:
   - web hacking
   - owasp
 tags:
-  - writeups
+  - papers
   - ctf
   - owasp
   - cors
