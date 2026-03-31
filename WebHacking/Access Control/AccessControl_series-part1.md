@@ -10,37 +10,39 @@ tags:
   - owasp
   - AccessControl
 ---
-##  Access Control: bypass em  controles...
+## Access Control: bypass em  controles
 
 Mais uma série! Quero com esta série desenvolver junto com você o **pensamento  ofensivo**, acerca deste tema. Controles de Acessos estão presentes em quase todo lugar. Vamos passar por alguns cenários aqui, sempre visando desenvolver capacidade analítica, isso faz total diferença.
 
 Mas um vez, meu intuito aqui não é te ensinar a resolver labs, principalmente pelo fato de que a resolução já estará presente nos labs, meu objetivo é desenvolver, junto com você essa capacidade de pensar de forma ofensiva sobre os cenários. Bem, sem mais enrolação, vamos lá!
 
-
 > [!Observação] Sobre os labs...
 > Vou usar alguns labs da PortSwigger como cenários a fim de treinarmos deixarei o link ds labs no final do paper, caso queira acompanhar comigo (recomendo).
 
-### Cookies: sempre preste atenção neles...
+### Cookies: sempre preste atenção neles
+
 O cenário aqui é o seguinte: uma aplicação, simples, com feature de gerenciamento de sessão, login, e o que parece ser um "e-commerce". Aqui, já batemos o olho e pensamos em possíveis falhas:
+
 - Regra de negócio:
-	- Talvez adulterar preços dos itens.
-	- Comprar de graça.
+ 	- Talvez adulterar preços dos itens.
+ 	- Comprar de graça.
 - Access Control Vulnerabilities (finalidade do lab).
 
-Isso com base apenas em navegação pela aplicação. Claro, A hipótese da regra de negócio não vai se encaixar aqui. 
+Isso com base apenas em navegação pela aplicação. Claro, A hipótese da regra de negócio não vai se encaixar aqui.
 
 É interessante, sempre como parte do mapeamento inicial sempre olhar cookies, headers e observar as requisições/respostas.
 
 Veja nesse nosso cenário:
 
-![[Pasted image 20260325214238.png]]
+![Image](./imgs/1.png)
 
-São sutis, mas podem mudar todo o jogo. Claro, aqui está de forma muito explícita, mas já dá para nos dar uma noção sobre o que olhar e onde olhar. 
+São sutis, mas podem mudar todo o jogo. Claro, aqui está de forma muito explícita, mas já dá para nos dar uma noção sobre o que olhar e onde olhar.
 
 Nesse ponto, é imprescindível que passe na sua cabeça alterar aquele valor ali de *false* para *true* . Fazendo isso, você já sabe o resultado.
 
 Mapeamento manual é uma **etapa chave** para o sucesso do ataque.
-### Access Control: brincando com as features....
+
+### Access Control: brincando com as features
 
 É sempre interessante "brincar" com as features. Quando você faz login, existe uma feature de troca de e-mail. Só que essa feature tem algo meio "diferente", veja:
 
@@ -85,12 +87,13 @@ Content-Length: 122
 ```
 
 Que estranho e perigoso. Eu diria que está cuspindo informação demais e desnecessária. Nesse ponto aqui, é interessante pensar nas possibilidades:
+
 - Um Mass Assignment.
 Creio que a essa altura você já conheça essa falha. O ideal é sempre ter esse músculo treinado: Olhou o cenário, deduziu quais possíveis falhas podem surgir ali, isso é crucial.
 
 Ao que tudo indica, o nível de permissionamento é indicado de forma numérica. Nesse ponto, é crucial levantar a hipótese de alterar esse números tanto para mais quanto mais quanto para menos.Mas pergunta é: como? não temos uma função na página de perfil do usuário que permita isso.
 
-Aí que entra a hipótese anterior: Mass Assignment. 
+Aí que entra a hipótese anterior: Mass Assignment.
 
 Para tentar é muito simples:
 
@@ -115,8 +118,8 @@ Accept-Encoding: gzip, deflate, br
 Priority: u=1, i
 
 {
-	"email":"rato@ratovelho.com",
-	"roleid":2  
+ "email":"rato@ratovelho.com",
+ "roleid":2  
 }
 ```
 
@@ -138,7 +141,9 @@ Content-Length: 122
 ```
 
 Interessante, não? No caso desse lab aqui, você percebe que realmente houve alteração do nível de permissionamento, visto que aparece o painel administrativo.
-### Access Control: ID Simples e GUID.
+
+### Access Control: ID Simples e GUID
+
 Ao olhar uma request como essa aqui imediatamente tem que vir em sua mente: "Alterar para outro usuário e ver no que dá":
 
 ```
@@ -186,7 +191,7 @@ Priority: u=0, i
 
 ```
 
-Veja: 
+Veja:
 
 ```HTML
 <p>Your username is: carlos</p>
@@ -252,12 +257,13 @@ Priority: u=0, i
 
 ```
 
- O GUID do sujeito ali. Agora é só fazer a troca. 
+ O GUID do sujeito ali. Agora é só fazer a troca.
 
 A questão é que se apenas considerarmos falha por apenas falhas, ou seja, **sem impacto**, ou sem demonstrar como aquela falha pode ser "escalada", seremos como um scanner de vulnerabilidades, **só que humano.**
 
 Não adiantaria eu saber que seu tenho acesso ao GUID de alguém , eu tenho acesso as seus dados, a pergunta que deve ser é: Como eu poderia ter acesso aos GUIDs?
-## No fim...
+
+## No fim
 
 Esse tipo de falha, sem dúvida alguma você deve ter em mente, quase qualquer aplicação tem esse tipo de feature presente e não é incomum ter falhas nelas. Scanners de vulnerabilidades podem achá-las, mas para alavancar o ataque ou mesmo encontrar aquelas sutis, somente uma "tool" conseguirá: **seu cérebro.**
 
@@ -269,3 +275,4 @@ Até breve!
 ---
 Para saber mais sobre [Access Control](https://portswigger.net/web-security/access-control)
 [Link](https://portswigger.net/web-security/all-labs#access-control-vulnerabilities) para todos os labs.
+
