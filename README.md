@@ -35,7 +35,7 @@ O objetivo é simples: documentar o aprendizado, compartilhar conhecimento e con
 ```
 papers/
 ├── WebHacking/          # Técnicas, vulnerabilidades e exploits web
-├── CTF/                 # [em breve] Writeups de CTFs
+├── CTF/                 # Minha jornada nos CTFs
 └── RedTeam/             # [em breve] Táticas, TTPs e pesquisa ofensiva
 ```
 
@@ -48,7 +48,7 @@ papers/
 | Categoria | Tópicos Cobertos | Status |
 |-----------|-----------------|--------|
 | 🌐 **Web Hacking** | SQLi, XSS, IDOR, SSRF, Auth Bypass, Business Logic... | `🟢 Ativo` |
-| 🚩 **CTF Writeups** | HackTheBox, TryHackMe, PicoCTF, etc. | `🟡 Em breve` |
+| 🚩 **CTF Writeups** | HackTheBox, TryHackMe, PicoCTF, etc. | `🟢 Ativo` |
 | 🔴 **Red Team** | TTPs, Privilege Escalation, Lateral Movement... | `🟡 Em breve` |
 | 🔬 **Research** | Vulnerabilidades, CVEs, análise técnica | `🟡 Em breve` |
 
@@ -61,6 +61,7 @@ papers/
 A pasta **WebHacking** concentra estudos e documentações sobre vulnerabilidades em aplicações web. Cada paper aborda um tema específico com explicação técnica, exemplos práticos e referências.
 
 **Temas explorados:**
+
 - Injeções e manipulação de input
 - Falhas de autenticação e autorização
 - Vulnerabilidades de lógica de negócio
