@@ -1,0 +1,27 @@
+10.129.31.242
+
+Portas abertas ===============
+80 -> http://silentium.htb/
+22
+
+OS -> MikroTik RouterOS 7.2
+
+Vhost enumerarion ===========
+staging -> Pagina de login.
+
+wordlist -> topmilion-5000
+
+WEb =========================
+When we acess the staging.silentium.htb/signin, we see a request to /api/v1/settings endpoint.
+
+hmm, maybe we can enumerate users on the app. bua we need a valid users to validade.
+
+The request that was going to /api/v1/settings it was made in GET method, I has decided change to POST and the answer changed.
+
+This answer show me the name of serivce that was runnng on the application.
+
+I tested other endpoints suggested by ChatGPT, but I receive "Access denied" beacuse I didnt have a access token.
+
+But, I Tested a endpoitn suggested by ChatGPT, even without authentication and it worked.
+
+
