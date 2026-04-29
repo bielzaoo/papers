@@ -1,4 +1,4 @@
-# Do 0 ao Top 1 Global no HackTheBox
+# Do 0 ao Top 1 Global no HackTheBox (Máquina 1)
 
 ## Como assim?
 

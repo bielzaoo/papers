@@ -1,4 +1,4 @@
-# Do 0 ao Top 1 Global em CTFs - Parte 2 (HackTheBox)
+# Do 0 ao Top 1 Global em CTFs - Parte 2 (Máquina 1  - HackTheBox)
 
 ## Recon: A Chave...
 Continuando... decidi tentar a abordagem de enumerar a API. Tentei acessar alguns endpoints mesmo sem um **token válido**, tentei achar a **documentação** da API e também não foi.
